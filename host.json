@@ -1,0 +1,19 @@
+{
+  "version": "2.0",
+  "managedDependency": {
+    "enabled": false
+  },
+  "functionTimeout": "00:10:00",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "[2.*, 3.0.0)"
+  },
+  "extensions": {
+    "queues": {
+      "maxDequeueCount": 5
+    }
+  },
+  "logging": {
+    "fileLoggingMode": "never"
+  }
+}

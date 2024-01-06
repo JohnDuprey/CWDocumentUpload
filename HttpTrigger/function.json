@@ -1,0 +1,25 @@
+{
+  "scriptFile": "../Modules/Entrypoints/Entrypoints.psm1",
+  "entryPoint": "Receive-HttpTrigger",
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "Request",
+      "methods": ["get", "post"],
+      "route": "{Endpoint}"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "Response"
+    },
+    {
+      "type": "queue",
+      "direction": "out",
+      "name": "QueueItem",
+      "queueName": "GenericQueue"
+    }
+  ]
+}
