@@ -18,7 +18,7 @@ if (($Results.messages | Measure-Object).Count -gt 0) {
         }
     }
     if ($MessagesNotProcessing) {
-        $Message = ":warning: There are messages in the Email Connector inbox that have not been processed for over 10 minutes. <$($env:EmailConnectorInbox)|Open Inbox>"
+        $Message = ":warning: There are $(($Results.messages | Measure-Object).Count) messages in the Email Connector inbox that have not been processed for over 10 minutes. <$($env:EmailConnectorInbox)|Open Inbox>"
     }
 } else {
     if ($Results.succeeded -eq $false) {
