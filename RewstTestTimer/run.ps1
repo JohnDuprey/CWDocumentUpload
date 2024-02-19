@@ -7,9 +7,9 @@ $Headers = @{
     'Accept'         = 'application/json'
 }
 
-$Results = Invoke-RestMethod -Uri $env:RewstWebhook -Headers $Headers -TimeoutSec 30
 
 try {
+    $Results = Invoke-RestMethod -Uri $env:RewstWebhook -Headers $Headers -TimeoutSec 30
     $Message = $false
     if (($Results.messages | Measure-Object).Count -gt 0) {
         $MessagesNotProcessing = $false
