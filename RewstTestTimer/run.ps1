@@ -9,7 +9,7 @@ $Headers = @{
 
 
 try {
-    $Results = Invoke-RestMethod -Uri $env:RewstWebhook -Headers $Headers -TimeoutSec 30
+    $Results = Invoke-RestMethod -Uri $env:RewstWebhook -Headers $Headers -TimeoutSec 90
     $Message = $false
     if (($Results.messages | Measure-Object).Count -gt 0) {
         $MessagesNotProcessing = $false
@@ -31,7 +31,7 @@ try {
         }
     }
 } catch {
-    $Message = ':warning: The connection to Rewst was unsuccessful. Check to see if there are any service issues. <https://app.rewst.io|Open Rewst>'
+    $Message = ':warning: The connection to Rewst was unsuccessful. Check to see if there are any service issues. <https://app.rewst.io|Open Rewst> ```Exception: {0}```' -f $_.Exception.Message
 }
 
 if ($Message) {
