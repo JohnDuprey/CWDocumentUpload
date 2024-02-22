@@ -14,7 +14,7 @@ try {
     if (($Results.messages | Measure-Object).Count -gt 0) {
         $MessagesNotProcessing = $false
         foreach ($Message in $Results.messages) {
-            if (($Message.receivedDateTime | Get-Date) -lt (Get-Date).AddMinutes(-10)) {
+            if ($Message.receivedDateTime -lt (Get-Date).AddMinutes(-10).ToUniversalTime()) {
                 $MessagesNotProcessing = $true
             }
         }
