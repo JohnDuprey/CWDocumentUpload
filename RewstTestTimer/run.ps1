@@ -9,7 +9,18 @@ $Headers = @{
 
 
 try {
-    $Results = Invoke-RestMethod -Uri $env:RewstWebhook -Headers $Headers -TimeoutSec 90
+    $Success = $false
+    $Count = 0
+    do {
+        try {
+            $Results = Invoke-RestMethod -Uri $env:RewstWebhook -Headers $Headers -TimeoutSec 90 -ErrorAction Stop
+            $Success = $true
+        } catch {
+            $Count++
+            Start-Sleep -Seconds 5
+        }
+    } while (!$Success -and $Count -lt 4)
+
     $Message = $false
     if (($Results.messages | Measure-Object).Count -gt 0) {
         $MessagesNotProcessing = $false
