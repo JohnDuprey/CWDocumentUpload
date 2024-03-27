@@ -13,7 +13,7 @@ try {
     $Count = 0
     do {
         try {
-            $Results = Invoke-RestMethod -Uri $env:RewstWebhook -Headers $Headers -TimeoutSec 90 -ErrorAction Stop
+            $Results = Invoke-RestMethod -Uri $env:RewstWebhook -Headers $Headers -TimeoutSec 120 -ErrorAction Stop
             $Success = $true
         } catch {
             $Count++
@@ -25,30 +25,30 @@ try {
     if (($Results.messages | Measure-Object).Count -gt 0) {
         $MessagesNotProcessing = $false
         foreach ($Message in $Results.messages) {
-            if ($Message.receivedDateTime -lt (Get-Date).AddMinutes(-10).ToUniversalTime()) {
+            if ($Message.receivedDateTime -lt (Get-Date).AddMinutes(-10)) {
                 $MessagesNotProcessing = $true
             }
         }
         if ($MessagesNotProcessing) {
-            $Message = ":warning: There are $(($Results.messages | Where-Object {($_.receivedDateTime | Get-Date) -lt (Get-Date).AddMinutes(-10)}| Measure-Object).Count) messages in the Email Connector inbox that have not been processed for over 10 minutes. <$($env:EmailConnectorInbox)|Open Inbox>"
+            $Text = ":warning: There are $(($Results.messages | Where-Object {($_.receivedDateTime | Get-Date) -lt (Get-Date).AddMinutes(-10)}| Measure-Object).Count) messages in the Email Connector inbox that have not been processed for over 10 minutes. <$($env:EmailConnectorInbox)|Open Inbox>"
         }
     } else {
         if ($Results.succeeded -eq $false) {
-            $Message = ":warning: The connection to the Email Connector inbox was unsuccessful, check the workflow execution logs for more details. <$($env:RewstExecutionLogs)|Execution Logs>"
+            $Text = ":warning: The connection to the Email Connector inbox was unsuccessful, check the workflow execution logs for more details. <$($env:RewstExecutionLogs)|Execution Logs>"
         }
 
         if (!$Results) {
-            $Message = ':warning: The connection to Rewst was unsuccessful. Check to see if there are any service issues. <https://app.rewst.io|Open Rewst>'
+            $Text = ':warning: The connection to Rewst was unsuccessful. Check to see if there are any service issues. <https://app.rewst.io|Open Rewst>'
         }
     }
 } catch {
-    $Message = ':warning: The connection to Rewst was unsuccessful. Check to see if there are any service issues. <https://app.rewst.io|Open Rewst> ```Exception: {0}```' -f $_.Exception.Message
+    $Text = ':warning: The connection to Rewst was unsuccessful. Check to see if there are any service issues. <https://app.rewst.io|Open Rewst> ```Exception: {0}```' -f $_.Exception.Message
 }
 
-if ($Message) {
+if ($Text) {
     $Json = @{
-        'text' = $Message
+        'text' = $Text
     } | ConvertTo-Json -Compress
-
+    write-host $Json
     Invoke-RestMethod -Uri $env:SlackAlertWebhook -Method Post -Body $Json
 }
