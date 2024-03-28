@@ -20,17 +20,17 @@ try {
             Start-Sleep -Seconds 5
         }
     } while (!$Success -and $Count -lt 4)
-
+    
     $Message = $false
     if (($Results.messages | Measure-Object).Count -gt 0) {
         $MessagesNotProcessing = $false
         foreach ($Message in $Results.messages) {
-            if ($Message.receivedDateTime -lt (Get-Date).AddMinutes(-10)) {
+            if ((Get-Date $Message.receivedDateTime) -lt (Get-Date).AddMinutes(-10)) {
                 $MessagesNotProcessing = $true
             }
         }
         if ($MessagesNotProcessing) {
-            $Text = ":warning: There are $(($Results.messages | Where-Object {($_.receivedDateTime | Get-Date) -lt (Get-Date).AddMinutes(-10)}| Measure-Object).Count) messages in the Email Connector inbox that have not been processed for over 10 minutes. <$($env:EmailConnectorInbox)|Open Inbox>"
+            $Text = ":warning: There are $(($Results.messages | Where-Object {(Get-Date $_.receivedDateTime) -lt (Get-Date).AddMinutes(-10)}| Measure-Object).Count) messages in the Email Connector inbox that have not been processed for over 10 minutes. <$($env:EmailConnectorInbox)|Open Inbox>"
         }
     } else {
         if ($Results.succeeded -eq $false) {
@@ -49,6 +49,6 @@ if ($Text) {
     $Json = @{
         'text' = $Text
     } | ConvertTo-Json -Compress
-    write-host $Json
+    Write-Host $Json
     Invoke-RestMethod -Uri $env:SlackAlertWebhook -Method Post -Body $Json
 }

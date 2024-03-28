@@ -1,1 +1,4 @@
 local.settings.json
+__azurite*
+__blobstorage*
+__queuestorage*
